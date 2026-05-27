@@ -10,8 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This repo (`define_cli`) is the **public** code repo. Planning docs live in a **private** `define-docs` repo, mounted as a git submodule at `docs/`.
 
-- **Code changes** → commit in this repo
-- **Doc changes** (SPEC, ARCHITECTURE, ROADMAP, DESIGN, PLAN) → commit inside `docs/` (submodule), then update the submodule pointer in this repo
+- **Code-only changes** → commit to this repo only (no submodule update needed)
+- **Doc changes** (SPEC, ARCHITECTURE, ROADMAP, DESIGN, PLAN) → commit inside `docs/` (submodule), push, then update the submodule pointer in this repo
 
 To update docs:
 ```bash
