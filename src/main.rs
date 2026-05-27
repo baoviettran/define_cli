@@ -110,6 +110,30 @@ fn render_entries(entries: &[Entry]) -> String {
     out
 }
 
+fn fetch_definition(word: &str) -> Result<Vec<Entry>, String> {
+    let encoded = urlencoding::encode(word);
+    let url = format!(
+        "https://api.dictionaryapi.dev/api/v2/entries/en/{}",
+        encoded
+    );
+
+    let response = match ureq::get(&url).call() {
+        Ok(r) => r,
+        Err(ureq::Error::Status(404, _)) => {
+            return Err(format!("Word \"{}\" not found in dictionary.", word));
+        }
+        Err(ureq::Error::Status(code, _)) => {
+            return Err(format!("API returned status {}.", code));
+        }
+        Err(e) => {
+            return Err(format!("Network error: {}", e));
+        }
+    };
+
+    serde_json::from_reader(response.into_reader())
+        .map_err(|e| format!("Failed to parse response: {}", e))
+}
+
 fn main() {
     println!("Hello, world!");
 }
