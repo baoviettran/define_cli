@@ -76,3 +76,23 @@ Each version introduces one major new Rust concept. See `docs/ROADMAP.md` for fu
 - Exit code 0 on success, 1 on error
 - Follow the ROADMAP versioning — don't skip ahead or mix scope across versions
 - Specs (`docs/SPEC.md`, `docs/ARCHITECTURE.md`) are the source of truth for requirements
+
+## Progress Tracking
+
+**Where to look:** `docs/ROADMAP.md` is the source of truth for what's shipped and what's next. Each version has a status line:
+- `Status: Shipped (YYYY-MM-DD)` — done, merged, tested
+- `Status: In progress` — currently being built
+- `Status: Planned` — not started yet
+
+**When starting a new session:**
+1. Read `docs/ROADMAP.md` — find the current version (first non-shipped)
+2. Read `docs/DESIGN.md` and `docs/PLAN.md` in the same docs/ directory for that version's implementation plan
+3. If the version has no DESIGN.md or PLAN.md yet, write them before coding (see `superpowers:writing-plans`)
+
+**When finishing a version:**
+1. Update ROADMAP.md status to `Shipped (YYYY-MM-DD)`
+2. Add entry to CHANGELOG.md in the public repo
+3. Commit docs (submodule), then update submodule pointer
+4. Commit CHANGELOG.md to public repo
+
+**CHANGELOG.md** (public repo) records what shipped in each version with a short summary and commit range.
