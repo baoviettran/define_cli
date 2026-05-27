@@ -1,0 +1,63 @@
+[
+  {
+    "word": "run",
+    "phonetics": [
+      { "text": "/rʌn/", "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/run-us.mp3" }
+    ],
+    "meanings": [
+      {
+        "partOfSpeech": "verb",
+        "definitions": [
+          {
+            "definition": "Move at a speed faster than a walk.",
+            "example": "she ran across the street",
+            "synonyms": [],
+            "antonyms": []
+          },
+          {
+            "definition": "Pass or cause to pass quickly in a particular direction.",
+            "example": "I ran my hand over the fabric",
+            "synonyms": [],
+            "antonyms": []
+          }
+        ],
+        "synonyms": ["sprint", "dash", "rush"],
+        "antonyms": []
+      },
+      {
+        "partOfSpeech": "noun",
+        "definitions": [
+          {
+            "definition": "An act or spell of running.",
+            "example": "she went for a run",
+            "synonyms": [],
+            "antonyms": []
+          }
+        ],
+        "synonyms": ["jog", "sprint"],
+        "antonyms": []
+      }
+    ]
+  },
+  {
+    "word": "run",
+    "phonetics": [
+      { "text": "/rʌn/", "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/run-au.mp3" }
+    ],
+    "meanings": [
+      {
+        "partOfSpeech": "noun",
+        "definitions": [
+          {
+            "definition": "A continuous period of operation or production.",
+            "example": "the press had a long run",
+            "synonyms": [],
+            "antonyms": []
+          }
+        ],
+        "synonyms": [],
+        "antonyms": []
+      }
+    ]
+  }
+]

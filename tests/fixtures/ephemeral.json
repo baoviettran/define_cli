@@ -1,0 +1,24 @@
+[
+  {
+    "word": "ephemeral",
+    "phonetics": [
+      { "text": "/ɪˈfem(ə)r(ə)l/", "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ephemeral-us.mp3" },
+      { "text": "", "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ephemeral-au.mp3" }
+    ],
+    "meanings": [
+      {
+        "partOfSpeech": "adjective",
+        "definitions": [
+          {
+            "definition": "Lasting for a very short time.",
+            "example": "fashions are ephemeral",
+            "synonyms": [],
+            "antonyms": []
+          }
+        ],
+        "synonyms": ["transitory", "transient", "fleeting", "short-lived"],
+        "antonyms": ["permanent", "eternal", "enduring"]
+      }
+    ]
+  }
+]
