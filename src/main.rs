@@ -135,7 +135,22 @@ fn fetch_definition(word: &str) -> Result<Vec<Entry>, String> {
 }
 
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = std::env::args().skip(1).collect();
+
+    if args.is_empty() {
+        eprintln!("Usage: define <word>");
+        std::process::exit(1);
+    }
+
+    let word = &args[0];
+
+    match fetch_definition(word) {
+        Ok(entries) => print!("{}", render_entries(&entries)),
+        Err(e) => {
+            eprintln!("{}{}{}", YELLOW, e, RESET);
+            std::process::exit(1);
+        }
+    }
 }
 
 #[cfg(test)]
