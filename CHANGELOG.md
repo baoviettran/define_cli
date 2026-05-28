@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## v2 — Flags & Polish — 2026-05-28
+
+**Shipped:** `d22eac8..0b28305`
+
+Command-line flags for output control and composability.
+
+### Added
+- `--short` — show only the first definition (one line)
+- `--json` — output raw JSON for piping to `jq` or other tools
+- `--no-color` — plain text output, no ANSI codes
+- `--pronounce` — print audio pronunciation URL
+- `-h / --help` — auto-generated help text
+- `-V / --version` — print version
+- Auto-detect TTY: colors disabled when output is piped
+- Codebase split into `api.rs`, `render.rs`, `cli.rs` modules
+
+### Dependencies
+- `clap` 4 (argument parsing, derive)
+
 ## v1 — Core Lookup — 2026-05-27
 
 **Shipped:** `8d45beb..4aa2787`
