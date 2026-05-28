@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use std::io::Read;
 
 #[derive(Deserialize, Debug)]
 pub struct Entry {
@@ -28,7 +29,7 @@ pub struct Definition {
     pub example: Option<String>,
 }
 
-pub fn fetch_definition(word: &str) -> Result<Vec<Entry>, String> {
+pub fn fetch_raw(word: &str) -> Result<String, String> {
     let encoded = urlencoding::encode(word);
     let url = format!(
         "https://api.dictionaryapi.dev/api/v2/entries/en/{}",
@@ -48,8 +49,28 @@ pub fn fetch_definition(word: &str) -> Result<Vec<Entry>, String> {
         }
     };
 
-    serde_json::from_reader(response.into_reader())
-        .map_err(|e| format!("Failed to parse response: {}", e))
+    let mut reader = response.into_reader();
+    let mut body = String::new();
+    reader
+        .read_to_string(&mut body)
+        .map_err(|e| format!("Failed to read response: {}", e))?;
+    Ok(body)
+}
+
+pub fn fetch_definition(word: &str) -> Result<Vec<Entry>, String> {
+    let raw = fetch_raw(word)?;
+    serde_json::from_str(&raw).map_err(|e| format!("Failed to parse response: {}", e))
+}
+
+pub fn find_audio_url(entries: &[Entry]) -> Option<&str> {
+    entries
+        .iter()
+        .flat_map(|e| &e.phonetics)
+        .find_map(|p| {
+            p.audio
+                .as_ref()
+                .and_then(|a| if a.is_empty() { None } else { Some(a.as_str()) })
+        })
 }
 
 #[cfg(test)]
@@ -111,5 +132,29 @@ mod tests {
 
         assert_eq!(entries[1].meanings.len(), 1);
         assert_eq!(entries[1].meanings[0].part_of_speech, "noun");
+    }
+
+    #[test]
+    fn test_find_audio_url() {
+        let json = std::fs::read_to_string(fixture_path("ephemeral.json")).unwrap();
+        let entries: Vec<Entry> = serde_json::from_str(&json).unwrap();
+        let url = find_audio_url(&entries);
+        assert!(url.is_some());
+        let url = url.unwrap();
+        assert!(!url.is_empty());
+        assert!(url.starts_with("https://"));
+    }
+
+    #[test]
+    fn test_find_audio_url_empty() {
+        let entries: Vec<Entry> = vec![Entry {
+            word: "test".to_string(),
+            phonetics: vec![Phonetic {
+                text: Some("/test/".to_string()),
+                audio: Some("".to_string()),
+            }],
+            meanings: vec![],
+        }];
+        assert!(find_audio_url(&entries).is_none());
     }
 }
