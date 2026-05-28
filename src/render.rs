@@ -74,6 +74,25 @@ pub fn render_entries(entries: &[Entry], no_color: bool) -> String {
     out
 }
 
+pub fn render_short(entries: &[Entry], no_color: bool) -> String {
+    let bold = if no_color { "" } else { BOLD };
+    let cyan = if no_color { "" } else { CYAN };
+    let reset = if no_color { "" } else { RESET };
+
+    match entries.first() {
+        Some(entry) => {
+            let first_def = entry
+                .meanings
+                .first()
+                .and_then(|m| m.definitions.first())
+                .map(|d| d.definition.as_str())
+                .unwrap_or("No definition found.");
+            format!("{}{}{}{}: {}", bold, cyan, entry.word, reset, first_def)
+        }
+        None => "No definition found.".to_string(),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -117,6 +136,29 @@ mod tests {
         assert!(output.contains("ADJECTIVE"));
         assert!(output.contains("Lasting for a very short time."));
         assert!(!output.contains("\x1b["));
+    }
+
+    #[test]
+    fn test_render_short() {
+        let json = fs::read_to_string(fixture_path("ephemeral.json")).unwrap();
+        let entries: Vec<Entry> = serde_json::from_str(&json).unwrap();
+        let output = render_short(&entries, false);
+
+        assert!(output.contains("ephemeral"));
+        assert!(output.contains("Lasting for a very short time."));
+        assert!(!output.contains('\n'));
+    }
+
+    #[test]
+    fn test_render_short_no_color() {
+        let json = fs::read_to_string(fixture_path("ephemeral.json")).unwrap();
+        let entries: Vec<Entry> = serde_json::from_str(&json).unwrap();
+        let output = render_short(&entries, true);
+
+        assert!(output.contains("ephemeral"));
+        assert!(output.contains("Lasting for a very short time."));
+        assert!(!output.contains("\x1b["));
+        assert!(!output.contains('\n'));
     }
 
     #[test]
