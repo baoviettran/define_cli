@@ -9,13 +9,21 @@ pub const YELLOW: &str = "\x1b[33m";
 pub const RESET: &str = "\x1b[0m";
 const DIVIDER: &str = "──────────────────────────────────────────────────";
 
-pub fn render_entries(entries: &[Entry]) -> String {
+pub fn render_entries(entries: &[Entry], no_color: bool) -> String {
+    let bold = if no_color { "" } else { BOLD };
+    let dim = if no_color { "" } else { DIM };
+    let cyan = if no_color { "" } else { CYAN };
+    let magenta = if no_color { "" } else { MAGENTA };
+    let green = if no_color { "" } else { GREEN };
+    let yellow = if no_color { "" } else { YELLOW };
+    let reset = if no_color { "" } else { RESET };
+
     let mut out = String::new();
 
     for entry in entries {
         out.push_str(&format!(
             "{}{}{}{}\n",
-            BOLD, CYAN, entry.word.to_uppercase(), RESET
+            bold, cyan, entry.word.to_uppercase(), reset
         ));
 
         if let Some(phonetic) = entry
@@ -23,23 +31,23 @@ pub fn render_entries(entries: &[Entry]) -> String {
             .iter()
             .find_map(|p| p.text.as_ref().and_then(|t| if t.is_empty() { None } else { Some(t) }))
         {
-            out.push_str(&format!("{}{}{}\n", DIM, phonetic, RESET));
+            out.push_str(&format!("{}{}{}\n", dim, phonetic, reset));
         }
 
-        out.push_str(&format!("{}{}{}\n", DIM, DIVIDER, RESET));
+        out.push_str(&format!("{}{}{}\n", dim, DIVIDER, reset));
 
         for meaning in &entry.meanings {
             out.push('\n');
             out.push_str(&format!(
                 "{}{}{}{}\n",
-                BOLD, MAGENTA, meaning.part_of_speech.to_uppercase(), RESET
+                bold, magenta, meaning.part_of_speech.to_uppercase(), reset
             ));
             out.push('\n');
 
             for (i, def) in meaning.definitions.iter().take(3).enumerate() {
                 out.push_str(&format!("  {}. {}\n", i + 1, def.definition));
                 if let Some(example) = &def.example {
-                    out.push_str(&format!("     {}\"{}\"{}\n", DIM, example, RESET));
+                    out.push_str(&format!("     {}\"{}\"{}\n", dim, example, reset));
                 }
             }
 
@@ -47,7 +55,7 @@ pub fn render_entries(entries: &[Entry]) -> String {
                 let syns: Vec<&str> = meaning.synonyms.iter().take(5).map(|s| s.as_str()).collect();
                 out.push_str(&format!(
                     "  {}Synonyms:{} {}{}{}\n",
-                    BOLD, RESET, GREEN, syns.join(", "), RESET
+                    bold, reset, green, syns.join(", "), reset
                 ));
             }
 
@@ -55,12 +63,12 @@ pub fn render_entries(entries: &[Entry]) -> String {
                 let ants: Vec<&str> = meaning.antonyms.iter().take(5).map(|s| s.as_str()).collect();
                 out.push_str(&format!(
                     "  {}Antonyms:{} {}{}{}\n",
-                    BOLD, RESET, YELLOW, ants.join(", "), RESET
+                    bold, reset, yellow, ants.join(", "), reset
                 ));
             }
         }
 
-        out.push_str(&format!("{}{}{}\n", DIM, DIVIDER, RESET));
+        out.push_str(&format!("{}{}{}\n", dim, DIVIDER, reset));
     }
 
     out
@@ -80,7 +88,7 @@ mod tests {
     fn test_render_single_entry() {
         let json = fs::read_to_string(fixture_path("ephemeral.json")).unwrap();
         let entries: Vec<Entry> = serde_json::from_str(&json).unwrap();
-        let output = render_entries(&entries);
+        let output = render_entries(&entries, false);
 
         assert!(output.contains(&format!("{}{}EPHEMERAL{}", BOLD, CYAN, RESET)));
         assert!(output.contains(&format!("{}/ɪˈfem(ə)r(ə)l/{}", DIM, RESET)));
@@ -100,10 +108,22 @@ mod tests {
     }
 
     #[test]
+    fn test_render_no_color() {
+        let json = fs::read_to_string(fixture_path("ephemeral.json")).unwrap();
+        let entries: Vec<Entry> = serde_json::from_str(&json).unwrap();
+        let output = render_entries(&entries, true);
+
+        assert!(output.contains("EPHEMERAL"));
+        assert!(output.contains("ADJECTIVE"));
+        assert!(output.contains("Lasting for a very short time."));
+        assert!(!output.contains("\x1b["));
+    }
+
+    #[test]
     fn test_render_multiple_entries() {
         let json = fs::read_to_string(fixture_path("run.json")).unwrap();
         let entries: Vec<Entry> = serde_json::from_str(&json).unwrap();
-        let output = render_entries(&entries);
+        let output = render_entries(&entries, false);
 
         assert!(output.contains(&format!("{}{}RUN{}", BOLD, CYAN, RESET)));
         assert!(output.contains(&format!("{}{}VERB{}", BOLD, MAGENTA, RESET)));

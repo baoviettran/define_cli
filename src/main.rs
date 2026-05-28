@@ -12,7 +12,7 @@ fn main() {
     let word = &args[0];
 
     match api::fetch_definition(word) {
-        Ok(entries) => print!("{}", render::render_entries(&entries)),
+        Ok(entries) => print!("{}", render::render_entries(&entries, false)),
         Err(e) => {
             eprintln!("{}{}{}", render::YELLOW, e, render::RESET);
             std::process::exit(1);
