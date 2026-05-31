@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## v4 — Audio Pronunciation — 2026-05-31
+
+**Shipped:** `65f46ea..c1bb664`
+
+Audio pronunciation playback from the terminal.
+
+### Added
+- `define --pronounce hello` — fetch and play MP3 pronunciation through speakers
+- `--accent us|uk|au` — choose pronunciation accent (default: us)
+- Phonetic text fallback when no audio URL is available
+- Graceful error handling for missing audio devices
+
+### Dependencies
+- `rodio` 0.22 (cross-platform audio playback via cpal)
+
+### New files
+- `src/audio.rs` — fetch audio bytes, decode MP3, play through speakers
+
 ## v3 — Cache & History — 2026-05-31
 
 **Shipped:** `87dd8c4..a0dea8a`
