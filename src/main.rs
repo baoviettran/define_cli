@@ -1,4 +1,5 @@
 mod api;
+mod audio;
 mod cache;
 mod cli;
 mod history;
