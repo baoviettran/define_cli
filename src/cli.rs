@@ -1,4 +1,4 @@
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 
 #[derive(Parser, Debug)]
 #[command(name = "define", version, about = "Look up English word definitions from the terminal")]
@@ -15,11 +15,32 @@ pub struct Cli {
     #[arg(long, help = "Plain text output without colors")]
     pub no_color: bool,
 
-    #[arg(long, help = "Print audio pronunciation URL")]
+    #[arg(long, help = "Play audio pronunciation")]
     pub pronounce: bool,
+
+    #[arg(long, value_enum, default_value_t, help = "Pronunciation accent (us, uk, au)")]
+    pub accent: Accent,
 
     #[command(subcommand)]
     pub command: Option<Commands>,
+}
+
+#[derive(Clone, Debug, Default, ValueEnum)]
+pub enum Accent {
+    #[default]
+    Us,
+    Uk,
+    Au,
+}
+
+impl Accent {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Accent::Us => "us",
+            Accent::Uk => "uk",
+            Accent::Au => "au",
+        }
+    }
 }
 
 #[derive(Subcommand, Debug)]
