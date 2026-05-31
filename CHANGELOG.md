@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## v3 — Cache & History — 2026-05-31
+
+**Shipped:** `87dd8c4..a0dea8a`
+
+Local cache for instant repeat lookups and history tracking.
+
+### Added
+- Local cache: responses saved to `~/.define/cache/<word>.json`
+- Cache hit: instant response, works offline
+- Cache miss: fetch from API, then store
+- `define cache clear` — wipe all cached responses
+- History log: every lookup appended to `~/.define/history.txt`
+- `define history` — list all looked-up words, newest first
+- `define history --stats` — show total lookups and most frequent words
+- `define history clear` — wipe lookup history
+
+### Dependencies
+- `dirs` 6 (cross-platform home directory resolution)
+
+### New files
+- `src/cache.rs` — read/write/clear cache logic
+- `src/history.rs` — append/read/clear history log with stats
+
 ## v2 — Flags & Polish — 2026-05-28
 
 **Shipped:** `d22eac8..0b28305`
