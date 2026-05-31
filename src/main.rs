@@ -9,10 +9,24 @@ use std::io::IsTerminal;
 
 fn main() {
     let cli = cli::Cli::parse();
+
+    // Subcommands are handled fully in v3 integration (next step)
+    if cli.command.is_some() {
+        eprintln!("Subcommands not yet wired up.");
+        std::process::exit(1);
+    }
+
+    let word = match &cli.word {
+        Some(w) => w,
+        None => {
+            eprintln!("Usage: define <word>");
+            std::process::exit(1);
+        }
+    };
     let no_color = cli.no_color || !std::io::stdout().is_terminal();
 
     if cli.json {
-        match api::fetch_raw(&cli.word) {
+        match api::fetch_raw(word) {
             Ok(raw) => print!("{}", raw),
             Err(e) => {
                 eprintln!("{}", e);
@@ -22,7 +36,7 @@ fn main() {
         return;
     }
 
-    let entries = match api::fetch_definition(&cli.word) {
+    let entries = match api::fetch_definition(word) {
         Ok(e) => e,
         Err(e) => {
             eprintln!("{}", e);

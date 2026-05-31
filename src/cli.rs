@@ -1,9 +1,10 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
 #[command(name = "define", version, about = "Look up English word definitions from the terminal")]
 pub struct Cli {
-    pub word: String,
+    /// The English word to look up
+    pub word: Option<String>,
 
     #[arg(long, help = "Show only the first definition")]
     pub short: bool,
@@ -16,4 +17,36 @@ pub struct Cli {
 
     #[arg(long, help = "Print audio pronunciation URL")]
     pub pronounce: bool,
+
+    #[command(subcommand)]
+    pub command: Option<Commands>,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum Commands {
+    /// Show lookup history
+    History {
+        #[command(subcommand)]
+        action: Option<HistoryAction>,
+
+        #[arg(long, help = "Show lookup statistics")]
+        stats: bool,
+    },
+    /// Manage the local cache
+    Cache {
+        #[command(subcommand)]
+        action: CacheAction,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+pub enum HistoryAction {
+    /// Delete lookup history
+    Clear,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum CacheAction {
+    /// Delete all cached responses
+    Clear,
 }
