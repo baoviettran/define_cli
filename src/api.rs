@@ -62,7 +62,27 @@ pub fn fetch_definition(word: &str) -> Result<Vec<Entry>, String> {
     serde_json::from_str(&raw).map_err(|e| format!("Failed to parse response: {}", e))
 }
 
-pub fn find_audio_url(entries: &[Entry]) -> Option<&str> {
+pub fn find_audio_url<'a>(entries: &'a [Entry], accent: &str) -> Option<&'a str> {
+    // Try preferred accent first
+    let suffix = format!("-{}.", accent);
+    let preferred = entries
+        .iter()
+        .flat_map(|e| &e.phonetics)
+        .find_map(|p| {
+            p.audio.as_ref().and_then(|url| {
+                if !url.is_empty() && url.contains(&suffix) {
+                    Some(url.as_str())
+                } else {
+                    None
+                }
+            })
+        });
+
+    if preferred.is_some() {
+        return preferred;
+    }
+
+    // Fallback: first available audio URL (any accent)
     entries
         .iter()
         .flat_map(|e| &e.phonetics)
@@ -138,7 +158,7 @@ mod tests {
     fn test_find_audio_url() {
         let json = std::fs::read_to_string(fixture_path("ephemeral.json")).unwrap();
         let entries: Vec<Entry> = serde_json::from_str(&json).unwrap();
-        let url = find_audio_url(&entries);
+        let url = find_audio_url(&entries, "us");
         assert!(url.is_some());
         let url = url.unwrap();
         assert!(!url.is_empty());
@@ -155,6 +175,32 @@ mod tests {
             }],
             meanings: vec![],
         }];
-        assert!(find_audio_url(&entries).is_none());
+        assert!(find_audio_url(&entries, "us").is_none());
+    }
+
+    #[test]
+    fn test_find_audio_url_us_accent() {
+        let json = std::fs::read_to_string(fixture_path("ephemeral.json")).unwrap();
+        let entries: Vec<Entry> = serde_json::from_str(&json).unwrap();
+        let url = find_audio_url(&entries, "us").unwrap();
+        assert!(url.contains("-us."));
+    }
+
+    #[test]
+    fn test_find_audio_url_au_accent() {
+        let json = std::fs::read_to_string(fixture_path("ephemeral.json")).unwrap();
+        let entries: Vec<Entry> = serde_json::from_str(&json).unwrap();
+        let url = find_audio_url(&entries, "au").unwrap();
+        assert!(url.contains("-au."));
+    }
+
+    #[test]
+    fn test_find_audio_url_missing_accent_falls_back() {
+        let json = std::fs::read_to_string(fixture_path("ephemeral.json")).unwrap();
+        let entries: Vec<Entry> = serde_json::from_str(&json).unwrap();
+        // ephemeral has no -uk. URL; should fall back to first available
+        let url = find_audio_url(&entries, "uk").unwrap();
+        assert!(!url.is_empty());
+        assert!(url.starts_with("https://"));
     }
 }
