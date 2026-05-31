@@ -1,6 +1,7 @@
 mod api;
 mod cache;
 mod cli;
+mod history;
 mod render;
 
 use clap::Parser;
