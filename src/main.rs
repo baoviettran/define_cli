@@ -1,4 +1,5 @@
 mod api;
+#[cfg(feature = "audio")]
 mod audio;
 mod cache;
 mod cli;
@@ -90,12 +91,16 @@ fn main() {
     let _ = history::append_history(word, None);
 
     if cli.pronounce {
-        match api::find_audio_url(&entries, cli.accent.as_str()) {
+        let accent = cli.accent_str();
+        match api::find_audio_url(&entries, accent) {
             Some(url) => {
+                #[cfg(feature = "audio")]
                 if let Err(e) = audio::play_pronunciation(url) {
                     eprintln!("{}", e);
                     std::process::exit(1);
                 }
+                #[cfg(not(feature = "audio"))]
+                println!("{}", url);
             }
             None => {
                 let phonetic = entries
@@ -109,7 +114,7 @@ fn main() {
                 match phonetic {
                     Some(t) => println!("{}", t),
                     None => {
-                        eprintln!("No audio pronunciation available.");
+                        eprintln!("No pronunciation available.");
                         std::process::exit(1);
                     }
                 }

@@ -1,4 +1,4 @@
-use clap::{Parser, Subcommand, ValueEnum};
+use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
 #[command(name = "define", version, about = "Look up English word definitions from the terminal")]
@@ -15,9 +15,11 @@ pub struct Cli {
     #[arg(long, help = "Plain text output without colors")]
     pub no_color: bool,
 
-    #[arg(long, help = "Play audio pronunciation")]
+    #[cfg_attr(feature = "audio", arg(long, help = "Play audio pronunciation"))]
+    #[cfg_attr(not(feature = "audio"), arg(long, help = "Show phonetic pronunciation"))]
     pub pronounce: bool,
 
+    #[cfg(feature = "audio")]
     #[arg(long, value_enum, default_value_t, help = "Pronunciation accent (us, uk, au)")]
     pub accent: Accent,
 
@@ -25,7 +27,23 @@ pub struct Cli {
     pub command: Option<Commands>,
 }
 
-#[derive(Clone, Debug, Default, ValueEnum)]
+impl Cli {
+    /// Returns the accent string for audio URL filtering.
+    /// Returns "us" when the audio feature is disabled (default for fallback).
+    pub fn accent_str(&self) -> &str {
+        #[cfg(feature = "audio")]
+        {
+            self.accent.as_str()
+        }
+        #[cfg(not(feature = "audio"))]
+        {
+            "us"
+        }
+    }
+}
+
+#[cfg(feature = "audio")]
+#[derive(Clone, Debug, Default, clap::ValueEnum)]
 pub enum Accent {
     #[default]
     Us,
@@ -33,6 +51,7 @@ pub enum Accent {
     Au,
 }
 
+#[cfg(feature = "audio")]
 impl Accent {
     pub fn as_str(&self) -> &'static str {
         match self {

@@ -1,3 +1,5 @@
+#![cfg(feature = "audio")]
+
 use std::io::{Cursor, Read};
 
 /// Fetch audio bytes from a URL.
