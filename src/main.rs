@@ -90,11 +90,29 @@ fn main() {
     let _ = history::append_history(word, None);
 
     if cli.pronounce {
-        match api::find_audio_url(&entries) {
-            Some(url) => println!("{}", url),
+        match api::find_audio_url(&entries, cli.accent.as_str()) {
+            Some(url) => {
+                if let Err(e) = audio::play_pronunciation(url) {
+                    eprintln!("{}", e);
+                    std::process::exit(1);
+                }
+            }
             None => {
-                eprintln!("No audio pronunciation available.");
-                std::process::exit(1);
+                let phonetic = entries
+                    .iter()
+                    .flat_map(|e| &e.phonetics)
+                    .find_map(|p| {
+                        p.text
+                            .as_ref()
+                            .and_then(|t| if t.is_empty() { None } else { Some(t.as_str()) })
+                    });
+                match phonetic {
+                    Some(t) => println!("{}", t),
+                    None => {
+                        eprintln!("No audio pronunciation available.");
+                        std::process::exit(1);
+                    }
+                }
             }
         }
         return;
