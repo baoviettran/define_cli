@@ -25,11 +25,18 @@ cargo build --release
 cp target/release/define_cli /usr/local/bin/define
 ```
 
+> **Linux users:** Audio playback (`--pronounce`) requires ALSA dev headers:
+> ```bash
+> sudo apt install libasound2-dev   # Debian/Ubuntu
+> ```
+> To build without audio support: `cargo build --release --no-default-features`
+
 ## Usage
 
 ```bash
 define hello
 define serendipity
+define --pronounce --accent uk ephemeral
 ```
 
 ## Built With

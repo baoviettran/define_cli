@@ -17,7 +17,8 @@ Audio pronunciation playback from the terminal.
 - Graceful error handling for missing audio devices
 
 ### Dependencies
-- `rodio` 0.22 (cross-platform audio playback via cpal)
+- `rodio` 0.22 (cross-platform audio playback via cpal, optional — gated behind `audio` feature)
+- Linux requires `libasound2-dev` to build with audio support
 
 ### New files
 - `src/audio.rs` — fetch audio bytes, decode MP3, play through speakers

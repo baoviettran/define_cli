@@ -29,10 +29,13 @@ git clone --recurse-submodules https://github.com/baoviettran/define_cli.git
 ## Build & Run
 
 ```bash
-cargo build                          # debug
+cargo build                          # debug (audio enabled by default)
 cargo build --release                # release binary → target/release/define_cli
 ./target/release/define_cli hello    # run
 ```
+
+**Linux:** Audio playback requires `libasound2-dev` (`sudo apt install libasound2-dev`).
+Build without audio: `cargo build --no-default-features`.
 
 ## Test
 
@@ -55,6 +58,8 @@ Three logical layers:
 Data flow: args → URL-encode → HTTP GET → deserialize JSON into `Vec<Entry>` → render to string → print to stdout. Errors go to stderr, exit code 1.
 
 Key types: `Entry`, `Phonetic`, `Meaning`, `Definition` — all derive `serde::Deserialize`.
+
+**Optional features:** `audio` (default: enabled) — gates `rodio` dependency and `src/audio.rs`. When disabled, `--pronounce` shows phonetic text instead of playing audio, and `--accent` flag is hidden.
 
 ## Version Roadmap
 
