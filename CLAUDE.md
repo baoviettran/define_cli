@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`define_cli` is a Rust CLI that looks up English word definitions from the terminal using the Free Dictionary API. It is versioned incrementally (v1 through v6); each version is independently shippable.
+`define_cli` is a Rust CLI that looks up English word definitions from the terminal using the Free Dictionary API. It is versioned incrementally (v1 through v9); each version is independently shippable.
 
 ## Two-Repo Structure
 
@@ -69,8 +69,11 @@ Key types: `Entry`, `Phonetic`, `Meaning`, `Definition` — all derive `serde::D
 | v2 | Flags & Polish (`--short`, `--json`, `--no-color`) | clap |
 | v3 | Cache & History | dirs, std::fs |
 | v4 | Audio Pronunciation | rodio |
-| v5 | Compare & Multi-word | std::thread or rayon |
-| v6 | Quiz Mode | crossterm |
+| v5 | Infrastructure & Compare | std::thread, chrono |
+| v6 | TUI Output Mode | ratatui, crossterm |
+| v7 | Quiz Mode | (TUI-based) |
+| v8 | Offline Dictionary | (cache-based) |
+| v9 | Distribution | cargo-dist |
 
 Each version introduces one major new Rust concept. See `docs/ROADMAP.md` for full details.
 
